@@ -1,12 +1,13 @@
+import RatingStars from '@components/rating-stars/rating-stars';
+import { AppRoute } from '@constants';
 import { CameraInfo } from '@type/camera-info';
+import { Link } from 'react-router-dom';
 
 type TCatalogCardProps = {
   camera: CameraInfo;
 }
 
 function CatalogCard({ camera }: TCatalogCardProps): JSX.Element {
-  const stars = Array.from({ length: 5 }, (_, index) => ({ id: `star-${index}` }));
-
   return (
     <div className="product-card">
       <div className="product-card__img">
@@ -17,10 +18,7 @@ function CatalogCard({ camera }: TCatalogCardProps): JSX.Element {
       </div>
       <div className="product-card__info">
         <div className="rate product-card__rate">
-          {stars.map((star) => (
-            <svg key={star.id} width={17} height={16} aria-hidden="true">
-              <use xlinkHref={camera.rating > stars.indexOf(star) ? '#icon-full-star' : '#icon-star'} />
-            </svg>))}
+          <RatingStars rating={camera.rating} />
           <p className="visually-hidden">Рейтинг: {camera.rating}</p>
           <p className="rate__count">
             <span className="visually-hidden">Всего оценок:</span>{camera.reviewCount}
@@ -32,10 +30,10 @@ function CatalogCard({ camera }: TCatalogCardProps): JSX.Element {
         </p>
       </div>
       <div className="product-card__buttons">
-        <button className="btn btn--purple product-card__btn" type="button">Купить
+        <button className="btn btn--purple product-card__btn" type="button">
+          Купить
         </button>
-        <a className="btn btn--transparent" href="#">Подробнее
-        </a>
+        <Link className="btn btn--transparent" to={`${AppRoute.Camera}/${camera.id}`}>Подробнее</Link>
       </div>
     </div>
   );

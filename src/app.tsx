@@ -3,14 +3,15 @@ import CatalogPage from '@pages/catalog-page/catalog-page';
 import NotFoundPage from '@pages/not-found-page/not-found-page';
 import { Route, Routes } from 'react-router-dom';
 import { useAppDispatch } from './hooks';
-import { featchCamerasAction } from '@store/thunks/cameras';
+import { fetchCamerasAction } from '@store/thunks/cameras';
 import { useEffect } from 'react';
+import ProductPage from '@pages/product-page/product-page';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(featchCamerasAction());
+    dispatch(fetchCamerasAction());
   }, [dispatch]);
 
   return (
@@ -18,6 +19,10 @@ function App(): JSX.Element {
       <Route
         path={AppRoute.Root}
         element={<CatalogPage />}
+      />
+      <Route
+        path={`${AppRoute.Camera}/:cameraId`}
+        element={<ProductPage />}
       />
       <Route
         path='*'
