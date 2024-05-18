@@ -1,8 +1,12 @@
 import CatalogList from '@components/catalog-list/catalog-list';
 import HelmetComponent from '@components/helmet-component/helmet-component';
 import Wrapper from '@components/wrapper/wrapper';
+import { useAppSelector } from '@hooks/index';
+import { selectCameras } from '@store/slices/cameras-data/selectors';
 
 function CatalogPage(): JSX.Element {
+  const cameras = useAppSelector(selectCameras);
+
   return (
     <Wrapper>
       <HelmetComponent title="Каталог - Фотошоп"/>
@@ -44,7 +48,7 @@ function CatalogPage(): JSX.Element {
                   <img src="img/banner.png" />
                 </div>
                 <div className="catalog__content">
-                  <CatalogList />
+                  <CatalogList cameras={cameras}/>
                 </div>
               </div>
             </div>

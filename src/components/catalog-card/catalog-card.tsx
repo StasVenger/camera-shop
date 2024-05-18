@@ -1,37 +1,34 @@
-function CatalogCard(): JSX.Element {
+import { CameraInfo } from '@type/camera-info';
+
+type TCatalogCardProps = {
+  camera: CameraInfo;
+}
+
+function CatalogCard({ camera }: TCatalogCardProps): JSX.Element {
+  const stars = Array.from({ length: 5 }, (_, index) => ({ id: `star-${index}` }));
+
   return (
     <div className="product-card">
       <div className="product-card__img">
         <picture>
-          <source type="image/webp" srcSet="img/content/img1.webp, img/content/img1@2x.webp 2x" />
-          <img src="img/content/img1.jpg" srcSet="img/content/img1@2x.jpg 2x" width={280} height={240} alt="Ретрокамера «Das Auge IV»" />
+          <source type="image/webp" srcSet={`${camera.previewImgWebp}, ${camera.previewImgWebp2x}`} />
+          <img src={camera.previewImg} srcSet={camera.previewImg2x} width={280} height={240} alt={camera.name} />
         </picture>
       </div>
       <div className="product-card__info">
         <div className="rate product-card__rate">
-          <svg width={17} height={16} aria-hidden="true">
-            <use xlinkHref="#icon-full-star" />
-          </svg>
-          <svg width={17} height={16} aria-hidden="true">
-            <use xlinkHref="#icon-full-star" />
-          </svg>
-          <svg width={17} height={16} aria-hidden="true">
-            <use xlinkHref="#icon-full-star" />
-          </svg>
-          <svg width={17} height={16} aria-hidden="true">
-            <use xlinkHref="#icon-star" />
-          </svg>
-          <svg width={17} height={16} aria-hidden="true">
-            <use xlinkHref="#icon-star" />
-          </svg>
-          <p className="visually-hidden">Рейтинг: 3</p>
+          {stars.map((star) => (
+            <svg key={star.id} width={17} height={16} aria-hidden="true">
+              <use xlinkHref={camera.rating > stars.indexOf(star) ? '#icon-full-star' : '#icon-star'} />
+            </svg>))}
+          <p className="visually-hidden">Рейтинг: {camera.rating}</p>
           <p className="rate__count">
-            <span className="visually-hidden">Всего оценок:</span>23
+            <span className="visually-hidden">Всего оценок:</span>{camera.reviewCount}
           </p>
         </div>
-        <p className="product-card__title">Ретрокамера «Das Auge IV»</p>
+        <p className="product-card__title">{camera.name}</p>
         <p className="product-card__price">
-          <span className="visually-hidden">Цена:</span>73 450 ₽
+          <span className="visually-hidden">Цена:</span>{camera.price.toLocaleString('ru-RU')} ₽
         </p>
       </div>
       <div className="product-card__buttons">
