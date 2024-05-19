@@ -10,4 +10,7 @@ export enum ApiRoute {
   Cameras = '/cameras',
 }
 
+export const COMMENT_DATE_FORMAT = 'DD MMMM';
+export const ISO_DATE_FORMAT = 'YYYY-MM-DD';
+
 export enum RequestStatus { Idle, Loading, Success, Failed }
