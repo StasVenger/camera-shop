@@ -4,13 +4,20 @@ import { ReactNode } from 'react';
 
 type TWrapperProps = {
   children: ReactNode;
+  isProductPage?: boolean;
 }
 
-function Wrapper({ children }: TWrapperProps): JSX.Element {
+function Wrapper({ children, isProductPage = false }: TWrapperProps): JSX.Element {
   return (
     <div className="wrapper">
       <Header />
       <main>{children}</main>
+      {isProductPage &&
+        <a className="up-btn" href="#header">
+          <svg width={12} height={18} aria-hidden="true">
+            <use xlinkHref="#icon-arrow2" />
+          </svg>
+        </a>}
       <Footer />
     </div>
   );
