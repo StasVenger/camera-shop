@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom';
 
 type TCatalogCardProps = {
   camera: CameraInfo;
+  onBuyClick: () => void;
 }
 
-function CatalogCard({ camera }: TCatalogCardProps): JSX.Element {
+function CatalogCard({ camera, onBuyClick }: TCatalogCardProps): JSX.Element {
   return (
     <div className="product-card">
       <div className="product-card__img">
@@ -30,7 +31,11 @@ function CatalogCard({ camera }: TCatalogCardProps): JSX.Element {
         </p>
       </div>
       <div className="product-card__buttons">
-        <button className="btn btn--purple product-card__btn" type="button">
+        <button
+          className="btn btn--purple product-card__btn"
+          type="button"
+          onClick={onBuyClick}
+        >
           Купить
         </button>
         <Link className="btn btn--transparent" to={`${AppRoute.Camera}/${camera.id}`}>Подробнее</Link>
