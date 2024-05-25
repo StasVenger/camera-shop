@@ -3,12 +3,13 @@ import { CameraInfo } from '@type/camera-info';
 
 type TCatalogListProps = {
   cameras: CameraInfo[];
+  onBuyClick: (camera: CameraInfo) => void;
 }
 
-function CatalogList({ cameras }: TCatalogListProps): JSX.Element {
+function CatalogList({ cameras, onBuyClick }: TCatalogListProps): JSX.Element {
   return (
     <div className="cards catalog__cards">
-      {cameras.map((camera) => <CatalogCard key={camera.id} camera={camera}/>)}
+      {cameras.map((camera) => <CatalogCard key={camera.id} camera={camera} onBuyClick={() => onBuyClick(camera)} />)}
     </div>
   );
 }
