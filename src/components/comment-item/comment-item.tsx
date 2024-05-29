@@ -8,7 +8,7 @@ type TCommentItemProps = {
 
 function CommentItem({ comment }: TCommentItemProps): JSX.Element {
   return (
-    <li className="review-card">
+    <li className="review-card" data-testid="comment-card">
       <div className="review-card__head">
         <p className="title title--h4">{comment.userName}</p>
         <time className="review-card__data" dateTime={formatDateToISO(comment.createAt)}>{humanizeDate(comment.createAt)}</time>

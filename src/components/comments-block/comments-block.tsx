@@ -18,7 +18,7 @@ function CommentsBlock({ comments }: TCommentsBlockProps): JSX.Element {
   const displayedComments = sortedComments.slice(0, visibleComments);
 
   return (
-    <section className="review-block">
+    <section className="review-block" data-testid="comments-block">
       <div className="container">
         <div className="page-content__headed">
           <h2 className="title title--h3">Отзывы</h2>

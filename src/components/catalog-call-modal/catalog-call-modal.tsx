@@ -83,7 +83,7 @@ function CatalogCallModal({ camera, isActive, onCloseClick }: TCatalogCallModalP
   });
 
   return (
-    <div ref={modalRef} className={classNames('modal', { 'is-active': isActive })}>
+    <div ref={modalRef} className={classNames('modal', { 'is-active': isActive })} data-testid="call-modal">
       <div className="modal__wrapper">
         <div className="modal__overlay" onClick={onCloseClick}/>
         <div className="modal__content">

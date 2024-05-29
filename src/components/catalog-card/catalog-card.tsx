@@ -10,7 +10,7 @@ type TCatalogCardProps = {
 
 function CatalogCard({ camera, onBuyClick }: TCatalogCardProps): JSX.Element {
   return (
-    <div className="product-card">
+    <div className="product-card" data-testid="catalog-card">
       <div className="product-card__img">
         <picture>
           <source type="image/webp" srcSet={`${camera.previewImgWebp}, ${camera.previewImgWebp2x}`} />
