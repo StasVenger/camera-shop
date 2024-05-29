@@ -1,6 +1,13 @@
 import { lorem, name } from 'faker';
 import { CameraInfo } from '@type/camera-info';
 import { Comment } from '@type/comments';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { createAPI } from '@services/api';
+import { State } from '@type/state';
+import { RequestStatus } from '@constants';
+
+export type AppThunkDispatch = ThunkDispatch<State, ReturnType<typeof createAPI>, Action>;
 
 export const makeFakeCamera = (): CameraInfo => ({
   id: crypto.randomUUID(),
@@ -28,4 +35,13 @@ export const makeFakeComment = (): Comment => ({
   disadvantage: lorem.text(),
   review: lorem.text(),
   rating: Math.floor(Math.random() * 5) + 1,
+});
+
+export const extractActionsTypes = (actions: Action<string>[]) => actions.map(({ type }) => type);
+
+export const makeFakeStore = (initialState?: Partial<State>): State => ({
+  cameras: { cameras: [], status: RequestStatus.Idle },
+  camera: { camera: null, status: RequestStatus.Idle },
+  comments: { comments: [], status: RequestStatus.Idle },
+  ...initialState ?? {},
 });
