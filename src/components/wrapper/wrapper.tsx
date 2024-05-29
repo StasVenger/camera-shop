@@ -9,7 +9,7 @@ type TWrapperProps = {
 
 function Wrapper({ children, isProductPage = false }: TWrapperProps): JSX.Element {
   return (
-    <div className="wrapper">
+    <div className="wrapper" data-testid="wrapper">
       <Header />
       <main>{children}</main>
       {isProductPage &&

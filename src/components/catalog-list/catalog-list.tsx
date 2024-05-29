@@ -8,7 +8,7 @@ type TCatalogListProps = {
 
 function CatalogList({ cameras, onBuyClick }: TCatalogListProps): JSX.Element {
   return (
-    <div className="cards catalog__cards">
+    <div className="cards catalog__cards" data-testid="catalog-list">
       {cameras.map((camera) => <CatalogCard key={camera.id} camera={camera} onBuyClick={() => onBuyClick(camera)} />)}
     </div>
   );

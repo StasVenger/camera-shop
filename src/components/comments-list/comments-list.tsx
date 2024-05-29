@@ -7,7 +7,7 @@ type TCommentsListProps = {
 
 function CommentsList({ comments }: TCommentsListProps): JSX.Element {
   return (
-    <ul className="review-block__list">
+    <ul className="review-block__list" data-testid="comments-list">
       {comments.map((comment) => <CommentItem key={comment.id} comment={comment} />)}
     </ul>
   );
