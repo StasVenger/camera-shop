@@ -2,13 +2,15 @@ import CommentsBlock from '@components/comments-block/comments-block';
 import HelmetComponent from '@components/helmet-component/helmet-component';
 import Loader from '@components/loader/loader';
 import RatingStars from '@components/rating-stars/rating-stars';
+import SimilarProducts from '@components/similar-products/similar-products';
 import Wrapper from '@components/wrapper/wrapper';
 import { AppRoute, RequestStatus } from '@constants';
 import { useAppDispatch, useAppSelector } from '@hooks/index';
 import NotFoundPage from '@pages/not-found-page/not-found-page';
 import { selectCameraInfo, selectCameraStatus } from '@store/slices/camera-data/selectors';
 import { selectComments } from '@store/slices/comments-data/selectors';
-import { fetchCameraByIdAction } from '@store/thunks/cameras';
+import { selectSimilarProducts } from '@store/slices/similar-products-data/selectors';
+import { fetchCameraByIdAction, fetchSimilarProductsAction } from '@store/thunks/cameras';
 import { fetchCommentsAction } from '@store/thunks/comments';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -20,11 +22,13 @@ function ProductPage(): JSX.Element {
   const cameraInfo = useAppSelector(selectCameraInfo);
   const cameraRequestStatus = useAppSelector(selectCameraStatus);
   const comments = useAppSelector(selectComments);
+  const similarProducts = useAppSelector(selectSimilarProducts);
   const [activeTab, setActiveTab] = useState('Характеристики');
 
   useEffect(() => {
     dispatch(fetchCameraByIdAction(cameraId as string));
     dispatch(fetchCommentsAction(cameraId as string));
+    dispatch(fetchSimilarProductsAction(cameraId as string));
   }, [cameraId, dispatch]);
 
   if (cameraRequestStatus === RequestStatus.Loading) {
@@ -137,6 +141,7 @@ function ProductPage(): JSX.Element {
             </div>
           </section>
         </div>
+        {similarProducts.length > 0 && <SimilarProducts products={similarProducts} />}
         <div className="page-content__section">
           <CommentsBlock comments={comments}/>
         </div>

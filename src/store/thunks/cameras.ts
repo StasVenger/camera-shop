@@ -17,3 +17,11 @@ export const fetchCameraByIdAction = createAppAsyncThunk<CameraInfo, string>(
     return data;
   }
 );
+
+export const fetchSimilarProductsAction = createAppAsyncThunk<CameraInfo[], string>(
+  'data/fetchSimilarProducts',
+  async (cameraId, { extra: api }) => {
+    const { data } = await api.get<CameraInfo[]>(`${ApiRoute.Cameras}/${cameraId}/similar`);
+    return data;
+  }
+);
