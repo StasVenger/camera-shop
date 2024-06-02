@@ -5,12 +5,19 @@ import Wrapper from '@components/wrapper/wrapper';
 import { AppRoute } from '@constants';
 import { useAppSelector } from '@hooks/index';
 import { selectCameras } from '@store/slices/cameras-data/selectors';
+import { selectPromoCameras } from '@store/slices/promo-data/selectors';
 import { CameraInfo } from '@type/camera-info';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import './catalog-page.css';
 
 function CatalogPage(): JSX.Element {
   const cameras = useAppSelector(selectCameras);
+  const promoCameras = useAppSelector(selectPromoCameras);
   const [selectedCamera, setSelectedCamera] = useState<CameraInfo | null>(null);
   const [isCallModalActive, setIsCallModalActive] = useState(false);
 
@@ -26,18 +33,33 @@ function CatalogPage(): JSX.Element {
   return (
     <Wrapper>
       <HelmetComponent title="Каталог - Фотошоп"/>
-      <div className="banner">
-        <picture>
-          <source type="image/webp" srcSet="img/content/banner-bg.webp, img/content/banner-bg@2x.webp 2x" />
-          <img src="img/content/banner-bg.jpg" srcSet="img/content/banner-bg@2x.jpg 2x" width={1280} height={280} alt="баннер" />
-        </picture>
-        <p className="banner__info">
-          <span className="banner__message">Новинка!</span>
-          <span className="title title--h1">Cannonball&nbsp;Pro&nbsp;MX&nbsp;8i</span>
-          <span className="banner__text">Профессиональная камера от&nbsp;известного производителя</span>
-          <a className="btn" href="#">Подробнее</a>
-        </p>
-      </div>
+      <Swiper
+        modules={[Pagination, Autoplay]}
+        slidesPerView={1}
+        pagination={{
+          clickable: true,
+        }}
+        autoplay={{
+          delay: 3000,
+        }}
+      >
+        {promoCameras.map((camera) => (
+          <SwiperSlide key={camera.id}>
+            <div className="banner">
+              <picture>
+                <source type="image/webp" srcSet={`${camera.previewImgWebp}, ${camera.previewImgWebp2x}`} />
+                <img src={camera.previewImg} srcSet={`${camera.previewImg2x}`} width={1280} height={280} alt="баннер" />
+              </picture>
+              <p className="banner__info">
+                <span className="banner__message">Новинка!</span>
+                <span className="title title--h1">{camera.name}</span>
+                <span className="banner__text">Профессиональная камера от&nbsp;известного производителя</span>
+                <Link className="btn" to={`${AppRoute.Camera}/${camera.id}`}>Подробнее</Link>
+              </p>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
       <div className="page-content">
         <div className="breadcrumbs">
           <div className="container">

@@ -6,12 +6,14 @@ import { useAppDispatch } from './hooks';
 import { fetchCamerasAction } from '@store/thunks/cameras';
 import { useEffect } from 'react';
 import ProductPage from '@pages/product-page/product-page';
+import { fetchPromoAction } from '@store/thunks/promo';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchCamerasAction());
+    dispatch(fetchPromoAction());
   }, [dispatch]);
 
   return (

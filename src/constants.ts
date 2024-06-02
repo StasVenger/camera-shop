@@ -9,6 +9,7 @@ export enum AppRoute {
 export enum ApiRoute {
   Cameras = '/cameras',
   Orders = '/orders',
+  Promo = '/promo',
 }
 
 export const COMMENT_DATE_FORMAT = 'DD MMMM';
