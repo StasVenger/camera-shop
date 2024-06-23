@@ -11,6 +11,9 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
+import CatalogFilter from '@components/catalog-filter/catalog-filter';
+import CatalogSort from '@components/catalog-sort/catalog-sort';
+import CatalogPagination from '@components/catalog-pagination/catalog-pagination';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import './catalog-page.css';
@@ -82,10 +85,12 @@ function CatalogPage(): JSX.Element {
             <h1 className="title title--h2">Каталог фото- и видеотехники</h1>
             <div className="page-content__columns">
               <div className="catalog__aside">
-                <img src="img/banner.png" />
+                <CatalogFilter />
               </div>
               <div className="catalog__content">
+                <CatalogSort />
                 <CatalogList cameras={cameras} onBuyClick={handleBuyClick}/>
+                <CatalogPagination />
               </div>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import CommentsList from '@components/comments-list/comments-list';
+import { VISIBLE_COMMENTS_COUNT } from '@constants';
 import { Comment } from '@type/comments';
 import { sortCommentsByDate } from '@utils/common';
 import { useState } from 'react';
@@ -11,7 +12,7 @@ function CommentsBlock({ comments }: TCommentsBlockProps): JSX.Element {
   const [visibleComments, setVisibleComments] = useState(3);
 
   const handleShowMoreComments = () => {
-    setVisibleComments(visibleComments + 3);
+    setVisibleComments(visibleComments + VISIBLE_COMMENTS_COUNT);
   };
 
   const sortedComments = sortCommentsByDate(comments);

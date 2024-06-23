@@ -14,5 +14,6 @@ export enum ApiRoute {
 
 export const COMMENT_DATE_FORMAT = 'DD MMMM';
 export const ISO_DATE_FORMAT = 'YYYY-MM-DD';
+export const VISIBLE_COMMENTS_COUNT = 3;
 
 export enum RequestStatus { Idle, Loading, Success, Failed }
