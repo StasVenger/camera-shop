@@ -1,4 +1,65 @@
-function CatalogFilter(): JSX.Element {
+import FilterCheckbox from '@components/filter-checkbox/filter-checkbox';
+import FilterPriceInput from '@components/filter-price-input/filter-price-input';
+import FilterRadioElement from '@components/filter-radio-element/filter-radio-element';
+import { INITIAL_FILTERS } from '@constants';
+import { CameraType, Category, Filters, Level } from '@type/filters';
+import { useCallback } from 'react';
+
+type TCatalogFilterProps = {
+  filters: Filters;
+  onFilterChange: (filters: Filters) => void;
+}
+
+function CatalogFilter({ filters, onFilterChange }: TCatalogFilterProps): JSX.Element {
+  const updateFilters = useCallback((newFilters: Partial<Filters>) => {
+    onFilterChange({ ...filters, ...newFilters });
+  }, [filters, onFilterChange]);
+
+  const handlePriceChange = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = evt.target;
+    updateFilters({
+      [name]: value === '' ? '' : Number(value).toString(),
+    });
+  }, [updateFilters]);
+
+  const handlePriceBlur = useCallback(() => {
+    let { priceFrom, priceTo } = filters;
+
+    if (priceFrom !== '') {
+      priceFrom = Math.max(Number(priceFrom), filters.minPrice).toString();
+    }
+
+    if (priceTo !== '') {
+      priceTo = Math.min(Number(priceTo), filters.maxPrice).toString();
+
+      if (Number(priceTo) < Number(priceFrom)) {
+        priceTo = priceFrom;
+      }
+    }
+
+    updateFilters({ priceFrom, priceTo });
+  }, [filters, updateFilters]);
+
+  const handleInputChange = useCallback(
+    (evt: React.ChangeEvent<HTMLInputElement>, key: keyof Filters, type: 'checkbox' | 'radio') => {
+      const { name, checked, value } = evt.target;
+      updateFilters({
+        [key]: type === 'checkbox'
+          ? { ...(filters[key] as Record<string, boolean>), [name]: checked }
+          : value,
+      });
+    },
+    [filters, updateFilters]
+  );
+
+  const handleResetClick = () => {
+    onFilterChange({
+      ...INITIAL_FILTERS,
+      minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice,
+    });
+  };
+
   return (
     <div className="catalog-filter">
       <form action="#">
@@ -6,73 +67,62 @@ function CatalogFilter(): JSX.Element {
         <fieldset className="catalog-filter__block">
           <legend className="title title--h5">Цена, ₽</legend>
           <div className="catalog-filter__price-range">
-            <div className="custom-input">
-              <label>
-                <input type="number" name="price" placeholder="от" />
-              </label>
-            </div>
-            <div className="custom-input">
-              <label>
-                <input type="number" name="priceUp" placeholder="до" />
-              </label>
-            </div>
+            <FilterPriceInput
+              name="priceFrom"
+              value={filters.priceFrom}
+              onChange={handlePriceChange}
+              onBlur={handlePriceBlur}
+              placeholder={`от ${filters.minPrice}`}
+            />
+            <FilterPriceInput
+              name="priceTo"
+              value={filters.priceTo}
+              onChange={handlePriceChange}
+              onBlur={handlePriceBlur}
+              placeholder={`до ${filters.maxPrice}`}
+            />
           </div>
         </fieldset>
         <fieldset className="catalog-filter__block">
           <legend className="title title--h5">Категория</legend>
-          <div className="custom-radio catalog-filter__item">
-            <label>
-              <input type="radio" name="category" defaultValue="photocamera" defaultChecked /><span className="custom-radio__icon" /><span className="custom-radio__label">Фотокамера</span>
-            </label>
-          </div>
-          <div className="custom-radio catalog-filter__item">
-            <label>
-              <input type="radio" name="category" defaultValue="videocamera" /><span className="custom-radio__icon" /><span className="custom-radio__label">Видеокамера</span>
-            </label>
-          </div>
+          {Object.values(Category).map((item) => (
+            <FilterRadioElement
+              key={item}
+              name="category"
+              value={item}
+              checked={filters.category === item}
+              label={item}
+              onChange={(evt) => handleInputChange(evt, 'category', 'radio')}
+            />
+          ))}
         </fieldset>
         <fieldset className="catalog-filter__block">
           <legend className="title title--h5">Тип камеры</legend>
-          <div className="custom-checkbox catalog-filter__item">
-            <label>
-              <input type="checkbox" name="digital" defaultChecked /><span className="custom-checkbox__icon" /><span className="custom-checkbox__label">Цифровая</span>
-            </label>
-          </div>
-          <div className="custom-checkbox catalog-filter__item">
-            <label>
-              <input type="checkbox" name="film" disabled /><span className="custom-checkbox__icon" /><span className="custom-checkbox__label">Плёночная</span>
-            </label>
-          </div>
-          <div className="custom-checkbox catalog-filter__item">
-            <label>
-              <input type="checkbox" name="snapshot" /><span className="custom-checkbox__icon" /><span className="custom-checkbox__label">Моментальная</span>
-            </label>
-          </div>
-          <div className="custom-checkbox catalog-filter__item">
-            <label>
-              <input type="checkbox" name="collection" defaultChecked disabled /><span className="custom-checkbox__icon" /><span className="custom-checkbox__label">Коллекционная</span>
-            </label>
-          </div>
+          {Object.entries(CameraType).map(([key, type]) => (
+            <FilterCheckbox
+              key={key}
+              name={type}
+              checked={filters.types[type]}
+              label={type}
+              onChange={(evt) => handleInputChange(evt, 'types', 'checkbox')}
+              disabled={filters.category === Category.Videocamera && (type === CameraType.Film || type === CameraType.Snapshot)}
+            />
+          ))}
         </fieldset>
         <fieldset className="catalog-filter__block">
           <legend className="title title--h5">Уровень</legend>
-          <div className="custom-checkbox catalog-filter__item">
-            <label>
-              <input type="checkbox" name="zero" defaultChecked /><span className="custom-checkbox__icon" /><span className="custom-checkbox__label">Нулевой</span>
-            </label>
-          </div>
-          <div className="custom-checkbox catalog-filter__item">
-            <label>
-              <input type="checkbox" name="non-professional" /><span className="custom-checkbox__icon" /><span className="custom-checkbox__label">Любительский</span>
-            </label>
-          </div>
-          <div className="custom-checkbox catalog-filter__item">
-            <label>
-              <input type="checkbox" name="professional" /><span className="custom-checkbox__icon" /><span className="custom-checkbox__label">Профессиональный</span>
-            </label>
-          </div>
+          {Object.entries(Level).map(([key, level]) => (
+            <FilterCheckbox
+              key={key}
+              name={level}
+              checked={filters.levels[level]}
+              label={level}
+              onChange={(evt) => handleInputChange(evt, 'levels', 'checkbox')}
+            />
+          ))}
         </fieldset>
-        <button className="btn catalog-filter__reset-btn" type="reset">Сбросить фильтры
+        <button className="btn catalog-filter__reset-btn" type="button" onClick={handleResetClick}>
+          Сбросить фильтры
         </button>
       </form>
     </div>
