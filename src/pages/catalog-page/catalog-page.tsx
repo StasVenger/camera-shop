@@ -1,4 +1,4 @@
-import { AppRoute } from '@constants';
+import { AppRoute, INITIAL_FILTERS } from '@constants';
 import { useAppSelector } from '@hooks/index';
 import { selectCameras } from '@store/slices/cameras-data/selectors';
 import { selectPromoCameras } from '@store/slices/promo-data/selectors';
@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
+import { Filters } from '@type/filters';
+import { filterCameras, sortCameras } from '@utils/common';
 import CatalogCallModal from '@components/catalog-call-modal/catalog-call-modal';
 import CatalogList from '@components/catalog-list/catalog-list';
 import HelmetComponent from '@components/helmet-component/helmet-component';
@@ -26,16 +28,33 @@ function CatalogPage(): JSX.Element {
   const [sortType, setSortType] = useState('price');
   const [sortDirection, setSortDirection] = useState('asc');
   const [sortedCameras, setSortedCameras] = useState<CameraInfo[]>([]);
+  const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
 
   useEffect(() => {
-    const sorted = [...cameras];
-    if (sortType === 'price') {
-      sorted.sort((a, b) => sortDirection === 'asc' ? a.price - b.price : b.price - a.price);
-    } else if (sortType === 'popularity') {
-      sorted.sort((a, b) => sortDirection === 'asc' ? a.rating - b.rating : b.rating - a.rating);
+    const filteredCameras = filterCameras(cameras, filters);
+    let minPrice = 0;
+    let maxPrice = 0;
+
+    if (filteredCameras.length > 0) {
+      const prices = filteredCameras.map((camera) => camera.price);
+      minPrice = Math.min(...prices);
+      maxPrice = Math.max(...prices);
     }
-    setSortedCameras(sorted);
-  }, [sortType, sortDirection, cameras]);
+
+    if (filters.minPrice !== minPrice || filters.maxPrice !== maxPrice) {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+      }));
+    }
+  }, [cameras, filters]);
+
+  useEffect(() => {
+    const filteredCameras = filterCameras(cameras, filters);
+    const sortedAndFilteredCameras = sortCameras(filteredCameras, sortType, sortDirection);
+    setSortedCameras(sortedAndFilteredCameras);
+  }, [sortType, sortDirection, cameras, filters]);
 
   const handleBuyClick = (camera: CameraInfo) => {
     setSelectedCamera(camera);
@@ -49,6 +68,10 @@ function CatalogPage(): JSX.Element {
   const handleSortChange = (type: string, direction: string): void => {
     setSortType(type);
     setSortDirection(direction);
+  };
+
+  const handleFilterChange = (newFilter: Filters) => {
+    setFilters(newFilter);
   };
 
   return (
@@ -103,7 +126,7 @@ function CatalogPage(): JSX.Element {
             <h1 className="title title--h2">Каталог фото- и видеотехники</h1>
             <div className="page-content__columns">
               <div className="catalog__aside">
-                <CatalogFilter />
+                <CatalogFilter filters={filters} onFilterChange={handleFilterChange}/>
               </div>
               <div className="catalog__content">
                 <CatalogSort sortType={sortType} sortDirection={sortDirection} onSortChange={handleSortChange} />
