@@ -43,5 +43,7 @@ export const makeFakeStore = (initialState?: Partial<State>): State => ({
   cameras: { cameras: [], status: RequestStatus.Idle },
   camera: { camera: null, status: RequestStatus.Idle },
   comments: { comments: [], status: RequestStatus.Idle },
+  similarProducts: { products: [], status: RequestStatus.Idle },
+  promo: { promoCameras: [], status: RequestStatus.Idle },
   ...initialState ?? {},
 });

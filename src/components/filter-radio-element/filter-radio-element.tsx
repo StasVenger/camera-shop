@@ -8,7 +8,7 @@ type TFilterRadioElementProps = {
 
 function FilterRadioElement({ name, value, checked, label, onChange }: TFilterRadioElementProps): JSX.Element {
   return (
-    <div className="custom-radio catalog-filter__item">
+    <div className="custom-radio catalog-filter__item" data-testid='filter-radio'>
       <label>
         <input
           type="radio"

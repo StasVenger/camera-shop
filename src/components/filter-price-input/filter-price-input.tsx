@@ -8,7 +8,7 @@ type TFilterPriceInputProps = {
 
 function FilterPriceInput({ name, value, placeholder, onChange, onBlur }: TFilterPriceInputProps): JSX.Element {
   return (
-    <div className="custom-input">
+    <div className="custom-input" data-testid='price-input'>
       <label>
         <input
           type="number"
