@@ -8,7 +8,7 @@ type TFilterCheckboxProps = {
 
 function FilterCheckbox({ name, checked, label, onChange, disabled }: TFilterCheckboxProps): JSX.Element {
   return (
-    <div className="custom-checkbox catalog-filter__item">
+    <div className="custom-checkbox catalog-filter__item" data-testid='filter-checkbox'>
       <label>
         <input
           type="checkbox"
