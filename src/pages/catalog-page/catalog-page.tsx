@@ -1,5 +1,5 @@
 import { AppRoute, INITIAL_FILTERS } from '@constants';
-import { useAppSelector } from '@hooks/index';
+import { useAppDispatch, useAppSelector } from '@hooks/index';
 import { selectCameras } from '@store/slices/cameras-data/selectors';
 import { selectPromoCameras } from '@store/slices/promo-data/selectors';
 import { CameraInfo } from '@type/camera-info';
@@ -9,22 +9,26 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import { Filters } from '@type/filters';
 import { filterCameras, sortCameras } from '@utils/common';
-import CatalogCallModal from '@components/catalog-call-modal/catalog-call-modal';
+import { basketActions } from '@store/slices/basket-data/basket';
 import CatalogList from '@components/catalog-list/catalog-list';
 import HelmetComponent from '@components/helmet-component/helmet-component';
 import Wrapper from '@components/wrapper/wrapper';
 import CatalogFilter from '@components/catalog-filter/catalog-filter';
 import CatalogSort from '@components/catalog-sort/catalog-sort';
 import CatalogPagination from '@components/catalog-pagination/catalog-pagination';
+import CatalogAddItemModal from '@components/catalog-add-item-modal/catalog-add-item-modal';
+import AddItemSuccessModal from '@components/add-item-success-modal/add-item-success-modal';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import './catalog-page.css';
 
 function CatalogPage(): JSX.Element {
+  const dispatch = useAppDispatch();
   const cameras = useAppSelector(selectCameras);
   const promoCameras = useAppSelector(selectPromoCameras);
   const [selectedCamera, setSelectedCamera] = useState<CameraInfo | null>(null);
   const [isCallModalActive, setIsCallModalActive] = useState(false);
+  const [isSuccessModalActive, setIsSuccessModalActive] = useState(false);
   const [sortType, setSortType] = useState('price');
   const [sortDirection, setSortDirection] = useState('asc');
   const [sortedCameras, setSortedCameras] = useState<CameraInfo[]>([]);
@@ -72,6 +76,18 @@ function CatalogPage(): JSX.Element {
 
   const handleFilterChange = (newFilter: Filters) => {
     setFilters(newFilter);
+  };
+
+  const handleAddToBasket = () => {
+    if (selectedCamera) {
+      dispatch(basketActions.addItemToBasket(selectedCamera));
+    }
+    setIsCallModalActive(false);
+    setIsSuccessModalActive(true);
+  };
+
+  const handleSuccessModalClose = () => {
+    setIsSuccessModalActive(false);
   };
 
   return (
@@ -137,7 +153,13 @@ function CatalogPage(): JSX.Element {
           </div>
         </section>
       </div>
-      <CatalogCallModal isActive={isCallModalActive} camera={selectedCamera as CameraInfo} onCloseClick={handleModalClose}/>
+      <CatalogAddItemModal
+        isActive={isCallModalActive}
+        camera={selectedCamera as CameraInfo}
+        onCloseClick={handleModalClose}
+        onAddToBasket={handleAddToBasket}
+      />
+      <AddItemSuccessModal isActive={isSuccessModalActive} onCloseClick={handleSuccessModalClose}/>
     </Wrapper>
   );
 }

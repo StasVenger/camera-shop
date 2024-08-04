@@ -9,6 +9,7 @@ import ProductPage from '@pages/product-page/product-page';
 import { fetchPromoAction } from '@store/thunks/promo';
 import { selectCamerasStatus } from '@store/slices/cameras-data/selectors';
 import Loader from '@components/loader/loader';
+import BasketPage from '@pages/basket-page/basket-page';
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -32,6 +33,10 @@ function App(): JSX.Element {
       <Route
         path={`${AppRoute.Camera}/:cameraId`}
         element={<ProductPage />}
+      />
+      <Route
+        path={AppRoute.Basket}
+        element={<BasketPage />}
       />
       <Route
         path='*'
