@@ -1,3 +1,4 @@
+import BasketButton from '@components/basket-button/basket-button';
 import FormSearch from '@components/form-search/form-search';
 import HeaderNavigation from '@components/header-navigation/header-navigation';
 import Logo from '@components/logo/logo';
@@ -12,6 +13,7 @@ function Header(): JSX.Element {
         <Logo />
         <HeaderNavigation />
         <FormSearch cameras={cameras}/>
+        <BasketButton />
       </div>
     </header>
   );

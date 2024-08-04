@@ -5,7 +5,8 @@ export const REQUEST_TIMEOUT = 5000;
 
 export enum AppRoute {
   Root = '/',
-  Camera = '/camera'
+  Camera = '/camera',
+  Basket = '/card',
 }
 
 export enum ApiRoute {
