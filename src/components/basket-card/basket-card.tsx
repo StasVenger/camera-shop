@@ -2,9 +2,10 @@ import { CameraInfo } from '@type/camera-info';
 
 type TBasketCardProps = {
   camera: CameraInfo;
+  onDeleteClick: (camera: CameraInfo) => void;
 }
 
-function BasketCard({ camera }: TBasketCardProps): JSX.Element {
+function BasketCard({ camera, onDeleteClick }: TBasketCardProps): JSX.Element {
   return (
     <li className="basket-item">
       <div className="basket-item__img">
@@ -40,7 +41,12 @@ function BasketCard({ camera }: TBasketCardProps): JSX.Element {
         </button>
       </div>
       <div className="basket-item__total-price"><span className="visually-hidden">Общая цена:</span>37 940 ₽</div>
-      <button className="cross-btn" type="button" aria-label="Удалить товар">
+      <button
+        className="cross-btn"
+        type="button"
+        aria-label="Удалить товар"
+        onClick={() => onDeleteClick(camera)}
+      >
         <svg width={10} height={10} aria-hidden="true">
           <use xlinkHref="#icon-close" />
         </svg>
