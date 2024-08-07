@@ -17,6 +17,10 @@ const basketSlice = createSlice({
       state.cameras.push(action.payload);
       localStorage.setItem('basketItems', JSON.stringify(state.cameras));
     },
+    removeItemFromBasket(state, action: PayloadAction<number>) {
+      state.cameras = state.cameras.filter((camera) => String(camera.id) !== String(action.payload));
+      localStorage.setItem('basketItems', JSON.stringify(state.cameras));
+    },
   },
 });
 

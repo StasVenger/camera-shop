@@ -1,3 +1,5 @@
+import AddItemSuccessModal from '@components/add-item-success-modal/add-item-success-modal';
+import CatalogAddItemModal from '@components/catalog-add-item-modal/catalog-add-item-modal';
 import CommentsBlock from '@components/comments-block/comments-block';
 import HelmetComponent from '@components/helmet-component/helmet-component';
 import Loader from '@components/loader/loader';
@@ -7,6 +9,7 @@ import Wrapper from '@components/wrapper/wrapper';
 import { AppRoute, RequestStatus } from '@constants';
 import { useAppDispatch, useAppSelector } from '@hooks/index';
 import NotFoundPage from '@pages/not-found-page/not-found-page';
+import { basketActions } from '@store/slices/basket-data/basket';
 import { selectCameraInfo, selectCameraStatus } from '@store/slices/camera-data/selectors';
 import { selectComments } from '@store/slices/comments-data/selectors';
 import { selectSimilarProducts } from '@store/slices/similar-products-data/selectors';
@@ -24,6 +27,8 @@ function ProductPage(): JSX.Element {
   const comments = useAppSelector(selectComments);
   const similarProducts = useAppSelector(selectSimilarProducts);
   const [activeTab, setActiveTab] = useState('Характеристики');
+  const [isCallModalActive, setIsCallModalActive] = useState(false);
+  const [isSuccessModalActive, setIsSuccessModalActive] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCameraByIdAction(cameraId as string));
@@ -38,6 +43,24 @@ function ProductPage(): JSX.Element {
   if (cameraRequestStatus === RequestStatus.Failed || !cameraInfo || !cameraId) {
     return <NotFoundPage />;
   }
+
+  const handleModalOpen = () => {
+    setIsCallModalActive(true);
+  };
+
+  const handleAddToBasket = () => {
+    dispatch(basketActions.addItemToBasket(cameraInfo));
+    setIsCallModalActive(false);
+    setIsSuccessModalActive(true);
+  };
+
+  const handleSuccessModalClose = () => {
+    setIsSuccessModalActive(false);
+  };
+
+  const handleModalClose = () => {
+    setIsCallModalActive(false);
+  };
 
   return (
     <Wrapper isProductPage>
@@ -87,7 +110,11 @@ function ProductPage(): JSX.Element {
                 <p className="product__price">
                   <span className="visually-hidden">Цена:</span>{cameraInfo.price.toLocaleString('ru-RU')} ₽
                 </p>
-                <button className="btn btn--purple" type="button">
+                <button
+                  className="btn btn--purple"
+                  type="button"
+                  onClick={handleModalOpen}
+                >
                   <svg width={24} height={16} aria-hidden="true">
                     <use xlinkHref="#icon-add-basket" />
                   </svg>Добавить в корзину
@@ -146,7 +173,13 @@ function ProductPage(): JSX.Element {
           <CommentsBlock comments={comments}/>
         </div>
       </div>
-
+      <CatalogAddItemModal
+        isActive={isCallModalActive}
+        camera={cameraInfo}
+        onCloseClick={handleModalClose}
+        onAddToBasket={handleAddToBasket}
+      />
+      <AddItemSuccessModal isActive={isSuccessModalActive} onCloseClick={handleSuccessModalClose}/>
     </Wrapper>
   );
 }
