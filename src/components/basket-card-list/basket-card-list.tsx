@@ -1,9 +1,9 @@
 import BasketCard from '@components/basket-card/basket-card';
-import { CameraInfo } from '@type/camera-info';
+import { Basket } from '@type/basket';
 
 type TBasketCardListProps = {
-  cameras: CameraInfo[];
-  onDeleteClick: (camera: CameraInfo) => void;
+  cameras: Basket[];
+  onDeleteClick: (camera: Basket) => void;
 }
 
 function BasketCardList({ cameras, onDeleteClick }: TBasketCardListProps): JSX.Element {

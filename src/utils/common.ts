@@ -52,3 +52,27 @@ export function sortCameras(cameras: CameraInfo[], sortType: string, sortDirecti
 
   return sortedCameras;
 }
+
+export function calculateDiscount(totalAmount: number, itemCount: number): number {
+  let discount = 0;
+
+  if (itemCount >= 2 && itemCount <= 3) {
+    discount = 3;
+  } else if (itemCount >= 3 && itemCount <= 5) {
+    discount = 5;
+  } else if (itemCount >= 6 && itemCount <= 10) {
+    discount = 10;
+  } else if (itemCount > 10) {
+    discount = 15;
+  }
+
+  if (totalAmount >= 10000 && totalAmount < 20000) {
+    discount -= 1;
+  } else if (totalAmount >= 20000 && totalAmount < 30000) {
+    discount -= 2;
+  } else if (totalAmount >= 30000) {
+    discount -= 3;
+  }
+
+  return Math.max(discount, 0);
+}
