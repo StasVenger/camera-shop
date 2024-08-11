@@ -1,27 +1,28 @@
 import BasketCardList from '@components/basket-card-list/basket-card-list';
+import BasketPurchaseSuccess from '@components/basket-purchase_success/basket-purchase_success';
 import BasketRemoveModal from '@components/basket-remove-modal/basket-remove-modal';
 import HelmetComponent from '@components/helmet-component/helmet-component';
+import Loader from '@components/loader/loader';
 import Wrapper from '@components/wrapper/wrapper';
 import { AppRoute } from '@constants';
 import { useAppDispatch, useAppSelector } from '@hooks/index';
 import { basketActions } from '@store/slices/basket-data/basket';
 import { selectBasketCameras } from '@store/slices/basket-data/selectors';
+import { addOrder } from '@store/thunks/orders';
 import { CameraInfo } from '@type/camera-info';
-import { useEffect, useState } from 'react';
+import { calculateDiscount } from '@utils/common';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function BasketPage(): JSX.Element {
   const basketCameras = useAppSelector(selectBasketCameras);
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [selectedCamera, setSelectedCamera] = useState<CameraInfo | null>(null);
+  const [isLoading, setLoading] = useState(false);
+  const [isSuccessPopupVisible, setSuccessPopupVisible] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (basketCameras.length === 0) {
-      navigate(AppRoute.Root);
-    }
-  });
 
   const handleDeleteClick = (camera: CameraInfo) => {
     setSelectedCamera(camera);
@@ -36,6 +37,42 @@ function BasketPage(): JSX.Element {
   const handleCloseClick = () => {
     setPopupVisible(false);
   };
+
+  const handleOrderClick = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const order = {
+        camerasIds: basketCameras.map((camera) => Number(camera.id)),
+        coupon: 'camera-333'
+      };
+      await dispatch(addOrder(order)).unwrap();
+      setSuccessPopupVisible(true);
+    } catch (err) {
+      setSuccessPopupVisible(true);
+      setError('Произошла ошибка при оформлении заказа. Попробуйте снова.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSuccessCloseClick = () => {
+    if (!error) {
+      dispatch(basketActions.clearBasket());
+      navigate(AppRoute.Root);
+    }
+    setSuccessPopupVisible(false);
+  };
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  const totalAmount = basketCameras.reduce((sum, camera) => sum + camera.totalPrice, 0);
+  const itemCount = basketCameras.length;
+  const discountPercentage = calculateDiscount(totalAmount, itemCount);
+  const discountAmount = (totalAmount * discountPercentage) / 100;
+  const totalWithDiscount = totalAmount - discountAmount;
 
   return (
     <Wrapper>
@@ -88,17 +125,27 @@ function BasketPage(): JSX.Element {
               <div className="basket__summary-order">
                 <p className="basket__summary-item">
                   <span className="basket__summary-text">Всего:</span>
-                  <span className="basket__summary-value">111 390 ₽</span>
+                  <span className="basket__summary-value">{totalAmount.toLocaleString()} ₽</span>
                 </p>
                 <p className="basket__summary-item">
                   <span className="basket__summary-text">Скидка:</span>
-                  <span className="basket__summary-value basket__summary-value--bonus">0 ₽</span>
+                  <span className="basket__summary-value basket__summary-value--bonus">{discountAmount.toLocaleString()} ₽</span>
                 </p>
                 <p className="basket__summary-item">
                   <span className="basket__summary-text basket__summary-text--total">К оплате:</span>
-                  <span className="basket__summary-value basket__summary-value--total">111 390 ₽</span>
+                  <span className="basket__summary-value basket__summary-value--total">{totalWithDiscount.toLocaleString()} ₽</span>
                 </p>
-                <button className="btn btn--purple" type="submit">Оформить заказ</button>
+                <button
+                  className="btn btn--purple"
+                  type="submit"
+                  onClick={(evt) => {
+                    evt.preventDefault();
+                    handleOrderClick();
+                  }}
+                  disabled={basketCameras.length === 0 || isLoading}
+                >
+                  Оформить заказ
+                </button>
               </div>
             </div>
           </div>
@@ -109,6 +156,11 @@ function BasketPage(): JSX.Element {
         isActive={isPopupVisible}
         onCloseClick={handleCloseClick}
         onDeleteClick={handleConfirmDeleteClick}
+      />
+      <BasketPurchaseSuccess
+        isActive={isSuccessPopupVisible}
+        onCloseClick={handleSuccessCloseClick}
+        error={error}
       />
     </Wrapper>
   );
